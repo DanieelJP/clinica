@@ -18,7 +18,7 @@ Crea archivos `.env` en las carpetas `frontend` y `backend` con las variables de
 ## Tecnologías Utilizadas
 
 - Frontend: React, TypeScript, Vite
-- Backend: Spring Boot, Java
+- Backend: Spring Boot
 - Base de datos: MySQL
 
 ## Funcionalidades Principales
