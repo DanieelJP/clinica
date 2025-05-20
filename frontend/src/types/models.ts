@@ -37,10 +37,7 @@ export enum DiaSemana {
 // Tipo para Horario
 export interface Horario {
   id?: number;
-  odontologo: {
-    id: number;
-  };
-  odontologo_id?: number;
+  odontologo_id: number;
   dia: string;
   diaSemana: DiaSemana;
   horaInicio: string;
@@ -83,7 +80,7 @@ export interface Responsable {
   dni: string;
   telefono: string;
   parentesco: Parentesco;
-  paciente?: Paciente;
+  paciente_dni?: string;
 }
 
 // Tipo para Tratamiento
@@ -92,6 +89,7 @@ export interface Tratamiento {
   nombre: string;
   descripcion?: string;
   precio: number;
+  duracionMinutos: number;
 }
 
 // Enumeración para el estado de la visita
@@ -104,13 +102,27 @@ export enum EstadoVisita {
 // Tipo para Visita
 export interface Visita {
   id: number;
-  paciente: Paciente;
-  odontologo: Odontologo;
-  tratamiento?: Tratamiento;
+  paciente_dni: string;
+  odontologo_id: number;
+  tratamiento_id?: number;
   fechaHora: string; // Formato ISO
   motivo: string;
   observaciones?: string;
   estado: EstadoVisita;
+  // Relaciones
+  paciente?: Paciente;
+  odontologo?: Odontologo;
+  tratamiento?: Tratamiento;
+}
+
+// Tipo para formulario de visita
+export interface VisitFormData {
+  odontologo_id: number;
+  paciente_dni: string;
+  fechaHora: string;
+  motivo: string;
+  observaciones?: string;
+  tratamiento_id?: number;
 }
 
 // Tipos para la autenticación

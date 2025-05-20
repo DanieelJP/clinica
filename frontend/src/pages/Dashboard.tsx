@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 import { TipoUsuario } from '../types/models';
-import visitaService from '../services/visitaService';
+import { visitaService } from '../services/visitaService';
 import pacienteService from '../services/pacienteService';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -40,9 +40,9 @@ const Dashboard: React.FC = () => {
         // Cargar visitas según el tipo de usuario
         let visitasResponse: any[] = [];
         if (user?.tipo === TipoUsuario.ODONTOLOGO) {
-          visitasResponse = await visitaService.getByOdontologo(user.id);
+          visitasResponse = await visitaService.getVisitsByDentist(user.id);
         } else {
-          visitasResponse = await visitaService.getByFecha(today);
+          visitasResponse = await visitaService.getVisitsByDate(today);
         }
         
         // Filtrar visitas de hoy y próximas

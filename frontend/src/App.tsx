@@ -16,6 +16,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Pacientes from './pages/Pacientes';
 import Horarios from './pages/Horarios';
+import Visitas from './pages/Visitas';
 
 // Definir tema
 const theme = createTheme({
@@ -31,10 +32,10 @@ const theme = createTheme({
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <AuthProvider>
-        <Router>
+    <Router>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <AuthProvider>
           <div className="App">
             <Navigation />
             <Routes>
@@ -46,6 +47,7 @@ function App() {
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/pacientes" element={<Pacientes />} />
                 <Route path="/horarios" element={<Horarios />} />
+                <Route path="/visitas" element={<Visitas />} />
                 {/* Aquí se añadirán más rutas protegidas */}
               </Route>
               
@@ -53,9 +55,9 @@ function App() {
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>
-        </Router>
-      </AuthProvider>
-    </ThemeProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </Router>
   );
 }
 

@@ -10,10 +10,12 @@
 /home/usuario/Escritorio/clinicaDental/backend/src/main/java/com/clinicadental/models/Horario.java
 /home/usuario/Escritorio/clinicaDental/backend/src/main/java/com/clinicadental/models/Administrativo.java
 /home/usuario/Escritorio/clinicaDental/backend/src/main/java/com/clinicadental/controllers/TratamientoController.java
+/home/usuario/Escritorio/clinicaDental/backend/src/main/java/com/clinicadental/dto/VisitaDTO.java
 /home/usuario/Escritorio/clinicaDental/backend/src/main/java/com/clinicadental/controllers/OdontologoController.java
 /home/usuario/Escritorio/clinicaDental/backend/src/main/java/com/clinicadental/dto/AuthResponse.java
 /home/usuario/Escritorio/clinicaDental/backend/src/main/java/com/clinicadental/dto/HorarioDTO.java
 /home/usuario/Escritorio/clinicaDental/backend/src/main/java/com/clinicadental/services/AuthenticationService.java
+/home/usuario/Escritorio/clinicaDental/backend/src/main/java/com/clinicadental/services/VisitaService.java
 /home/usuario/Escritorio/clinicaDental/backend/src/main/java/com/clinicadental/repositories/UsuarioRepository.java
 /home/usuario/Escritorio/clinicaDental/backend/src/main/java/com/clinicadental/repositories/TratamientoRepository.java
 /home/usuario/Escritorio/clinicaDental/backend/src/main/java/com/clinicadental/models/Odontologo.java

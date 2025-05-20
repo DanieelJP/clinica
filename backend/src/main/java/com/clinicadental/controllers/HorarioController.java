@@ -43,47 +43,64 @@ public class HorarioController {
             String horarioJson = objectMapper.writeValueAsString(horarioDTO);
             logger.info("Recibida solicitud para crear horario. Datos recibidos: {}", horarioJson);
             
+            // Validar que los campos requeridos no sean null
+            if (horarioDTO.getHoraInicio() == null || horarioDTO.getHoraInicio().trim().isEmpty()) {
+                throw new RuntimeException("La hora de inicio es requerida");
+            }
+            if (horarioDTO.getHoraFin() == null || horarioDTO.getHoraFin().trim().isEmpty()) {
+                throw new RuntimeException("La hora de fin es requerida");
+            }
+            
+            logger.info("Procesando horas - Inicio: '{}', Fin: '{}'", 
+                horarioDTO.getHoraInicio(), horarioDTO.getHoraFin());
+            
             Horario horario = new Horario();
             horario.setDia(horarioDTO.getDia());
             
-            // Convertir el string a enum DiaSemana
+            // Convertir el string a enum DiaSemana usando el nuevo método
             try {
-                DiaSemana diaSemana = DiaSemana.valueOf(horarioDTO.getDiaSemana());
+                DiaSemana diaSemana = DiaSemana.fromString(horarioDTO.getDiaSemana());
                 horario.setDiaSemana(diaSemana);
+                logger.info("Día de la semana convertido exitosamente: {}", diaSemana);
             } catch (IllegalArgumentException e) {
                 logger.error("Error al convertir diaSemana: {}", horarioDTO.getDiaSemana());
                 throw new RuntimeException("Día de la semana inválido: " + horarioDTO.getDiaSemana());
             }
             
             // Intentar parsear las horas con diferentes formatos
-            try {
-                LocalTime horaInicio = null;
-                LocalTime horaFin = null;
-                
-                for (DateTimeFormatter formatter : TIME_FORMATTERS) {
-                    try {
-                        horaInicio = LocalTime.parse(horarioDTO.getHoraInicio(), formatter);
-                        horaFin = LocalTime.parse(horarioDTO.getHoraFin(), formatter);
-                        break;
-                    } catch (DateTimeParseException e) {
-                        continue;
-                    }
+            LocalTime horaInicio = null;
+            LocalTime horaFin = null;
+            
+            for (DateTimeFormatter formatter : TIME_FORMATTERS) {
+                try {
+                    String horaInicioStr = horarioDTO.getHoraInicio().trim();
+                    String horaFinStr = horarioDTO.getHoraFin().trim();
+                    logger.info("Intentando parsear con formato {} - Inicio: '{}', Fin: '{}'", 
+                        formatter.toString(), horaInicioStr, horaFinStr);
+                    
+                    horaInicio = LocalTime.parse(horaInicioStr, formatter);
+                    horaFin = LocalTime.parse(horaFinStr, formatter);
+                    logger.info("Horas parseadas exitosamente - Inicio: {}, Fin: {}", 
+                        horaInicio, horaFin);
+                    break;
+                } catch (DateTimeParseException e) {
+                    logger.warn("Error al parsear con formato {}: {}", formatter.toString(), e.getMessage());
+                    continue;
                 }
-                
-                if (horaInicio == null || horaFin == null) {
-                    throw new DateTimeParseException("No se pudo parsear el formato de hora", 
-                        horarioDTO.getHoraInicio(), 0);
-                }
-                
-                horario.setHoraInicio(horaInicio);
-                horario.setHoraFin(horaFin);
-            } catch (DateTimeParseException e) {
-                logger.error("Error al parsear horas: inicio={}, fin={}", 
-                    horarioDTO.getHoraInicio(), horarioDTO.getHoraFin());
-                throw new RuntimeException("Formato de hora inválido. Use HH:mm o HH:mm:ss", e);
             }
             
+            if (horaInicio == null || horaFin == null) {
+                logger.error("Error al parsear horas: inicio={}, fin={}", 
+                    horarioDTO.getHoraInicio(), horarioDTO.getHoraFin());
+                throw new RuntimeException("Formato de hora inválido. Use HH:mm o HH:mm:ss");
+            }
+            
+            horario.setHoraInicio(horaInicio);
+            horario.setHoraFin(horaFin);
             horario.setDisponible(horarioDTO.isDisponible());
+            
+            logger.info("Intentando guardar horario con valores - Inicio: {}, Fin: {}, Día: {}, Disponible: {}", 
+                horario.getHoraInicio(), horario.getHoraFin(), horario.getDiaSemana(), horario.isDisponible());
             
             Horario savedHorario = horarioService.crearHorario(horario, horarioDTO.getOdontologo_id());
             String savedHorarioJson = objectMapper.writeValueAsString(savedHorario);

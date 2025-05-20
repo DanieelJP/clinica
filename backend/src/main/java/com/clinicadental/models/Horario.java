@@ -26,10 +26,10 @@ public class Horario {
     @Column(nullable = false)
     private DiaSemana diaSemana;
 
-    @Column(nullable = false)
+    @Column(name = "horaInicio", nullable = false, columnDefinition = "time(6)")
     private LocalTime horaInicio;
 
-    @Column(nullable = false)
+    @Column(name = "horaFin", nullable = false, columnDefinition = "time(6)")
     private LocalTime horaFin;
 
     @Column(nullable = false)

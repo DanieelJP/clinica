@@ -35,17 +35,16 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        logger.info("Recibida solicitud de login para usuario: {}", loginRequest.getUsername());
-
         try {
+            logger.info("Intentando iniciar sesión con: {}", loginRequest.getUsername());
             String token = authService.login(loginRequest.getUsername(), loginRequest.getPassword());
+            
             Usuario usuario = usuarioRepository.findByUsername(loginRequest.getUsername())
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            
             String tipoUsuario = usuario.getClass().getSimpleName();
-            logger.info("Clase del usuario: {} para usuario {}", tipoUsuario, usuario.getUsername());
+            logger.info("Tipo de usuario detectado: {}", tipoUsuario);
 
-            // Establecer el tipo y los campos específicos según el tipo de usuario
             if (usuario instanceof Odontologo odontologo) {
                 usuario.setTipo("ODONTOLOGO");
                 usuario.setMatricula(odontologo.getMatricula());

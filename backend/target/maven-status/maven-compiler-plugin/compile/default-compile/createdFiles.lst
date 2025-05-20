@@ -29,6 +29,8 @@ com/clinicadental/models/Administrativo.class
 com/clinicadental/repositories/TratamientoRepository.class
 com/clinicadental/dto/LoginRequest.class
 com/clinicadental/dto/HorarioDTO.class
+com/clinicadental/dto/VisitaDTO.class
 com/clinicadental/security/JwtAuthorizationFilter.class
+com/clinicadental/services/VisitaService.class
 com/clinicadental/security/JwtAuthenticationFilter.class
 com/clinicadental/repositories/VisitaRepository.class

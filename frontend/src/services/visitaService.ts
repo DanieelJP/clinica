@@ -1,65 +1,81 @@
-import api from './api';
-import { Visita, EstadoVisita } from '../types/models';
+import axios from 'axios';
+import { Visita, VisitFormData, EstadoVisita } from '../types/models';
+
+const API_URL = 'http://localhost:8080/api';
 
 export const visitaService = {
-  getAll: async (): Promise<Visita[]> => {
-    const response = await api.get<Visita[]>('/visitas');
-    return response.data;
-  },
+    async createVisit(visitData: VisitFormData): Promise<Visita> {
+        try {
+            const response = await axios.post(`${API_URL}/visitas`, {
+                ...visitData,
+                estado: EstadoVisita.PROGRAMADA
+            });
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                throw new Error(error.response.data);
+            }
+            throw new Error('Error al crear la visita');
+        }
+    },
 
-  getById: async (id: number): Promise<Visita> => {
-    const response = await api.get<Visita>(`/visitas/${id}`);
-    return response.data;
-  },
+    async updateVisit(id: number, visitData: Partial<VisitFormData & { estado?: EstadoVisita }>): Promise<Visita> {
+        try {
+            const response = await axios.put(`${API_URL}/visitas/${id}`, visitData);
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                throw new Error(error.response.data);
+            }
+            throw new Error('Error al actualizar la visita');
+        }
+    },
 
-  create: async (visita: Visita): Promise<Visita> => {
-    const response = await api.post<Visita>('/visitas', visita);
-    return response.data;
-  },
+    async getVisitsByDentist(dentistId: number): Promise<Visita[]> {
+        try {
+            const response = await axios.get(`${API_URL}/visitas/odontologo/${dentistId}`);
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                throw new Error(error.response.data);
+            }
+            throw new Error('Error al obtener las visitas del odontólogo');
+        }
+    },
 
-  update: async (id: number, visita: Visita): Promise<Visita> => {
-    const response = await api.put<Visita>(`/visitas/${id}`, visita);
-    return response.data;
-  },
+    async getVisitsByPatient(dni: string): Promise<Visita[]> {
+        try {
+            const response = await axios.get(`${API_URL}/visitas/paciente/${dni}`);
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                throw new Error(error.response.data);
+            }
+            throw new Error('Error al obtener las visitas del paciente');
+        }
+    },
 
-  delete: async (id: number): Promise<void> => {
-    await api.delete(`/visitas/${id}`);
-  },
+    async getVisitsByDate(date: string): Promise<Visita[]> {
+        try {
+            const response = await axios.get(`${API_URL}/visitas/fecha/${date}`);
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                throw new Error(error.response.data);
+            }
+            throw new Error('Error al obtener las visitas de la fecha');
+        }
+    },
 
-  cambiarEstado: async (id: number, estado: EstadoVisita): Promise<Visita> => {
-    const response = await api.patch<Visita>(`/visitas/${id}/estado`, { estado });
-    return response.data;
-  },
-
-  getByPaciente: async (dniPaciente: string): Promise<Visita[]> => {
-    const response = await api.get<Visita[]>(`/visitas/paciente/${dniPaciente}`);
-    return response.data;
-  },
-
-  getByOdontologo: async (idOdontologo: number): Promise<Visita[]> => {
-    const response = await api.get<Visita[]>(`/visitas/odontologo/${idOdontologo}`);
-    return response.data;
-  },
-
-  getByFecha: async (fecha: string): Promise<Visita[]> => {
-    console.log(`Solicitando visitas para la fecha: ${fecha}`);
-    try {
-      // Verificar que el token exista antes de hacer la solicitud
-      const token = localStorage.getItem('token');
-      if (!token) {
-        console.warn('No se encontró token JWT para la solicitud');
-      } else {
-        console.log('Token encontrado:', token.substring(0, 20) + '...');
-      }
-      
-    const response = await api.get<Visita[]>(`/visitas/fecha/${fecha}`);
-      console.log('Respuesta de visitas por fecha:', response.data);
-    return response.data;
-    } catch (error) {
-      console.error('Error al obtener visitas por fecha:', error);
-      throw error;
+    async getVisitById(id: number): Promise<Visita> {
+        try {
+            const response = await axios.get(`${API_URL}/visitas/${id}`);
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                throw new Error(error.response.data);
+            }
+            throw new Error('Error al obtener la visita');
+        }
     }
-  }
 };
-
-export default visitaService;

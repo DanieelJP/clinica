@@ -5,7 +5,7 @@ export const horarioService = {
     async crearHorario(horario: Horario): Promise<Horario> {
         // Transformar el objeto para que coincida con la estructura de la base de datos
         const horarioData = {
-            odontologo_id: horario.odontologo.id,
+            odontologo_id: horario.odontologo_id,
             dia: horario.dia,
             diaSemana: horario.diaSemana,
             horaInicio: horario.horaInicio,

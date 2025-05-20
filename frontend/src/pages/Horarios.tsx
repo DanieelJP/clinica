@@ -110,9 +110,7 @@ const Horarios: React.FC = () => {
     e.preventDefault();
     try {
       const horarioData: Horario = {
-        odontologo: {
-          id: user?.id || 0
-        },
+        odontologo_id: user?.id || 0,
         dia: currentHorario.diaSemana.toString(),
         diaSemana: currentHorario.diaSemana,
         horaInicio: currentHorario.horaInicio,
