@@ -14,11 +14,13 @@ com/clinicadental/repositories/PacienteRepository.class
 com/clinicadental/controllers/AuthController.class
 com/clinicadental/config/SecurityConfig.class
 com/clinicadental/repositories/OdontologoRepository.class
+com/clinicadental/config/WebConfig.class
 com/clinicadental/services/AuthenticationService.class
 com/clinicadental/config/JwtConfig.class
 com/clinicadental/ClinicaOdontologicaApplication.class
 com/clinicadental/models/Visita.class
 com/clinicadental/controllers/PacienteController.class
+com/clinicadental/models/Administrativo.class
 com/clinicadental/repositories/TratamientoRepository.class
 com/clinicadental/dto/LoginRequest.class
 com/clinicadental/security/JwtAuthorizationFilter.class

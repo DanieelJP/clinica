@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/pacientes")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class PacienteController {
 
     private final PacienteRepository pacienteRepository;
@@ -22,9 +23,11 @@ public class PacienteController {
         return ResponseEntity.ok(pacienteRepository.findAll());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Paciente> getPacienteById(@PathVariable Integer id) {
-        return pacienteRepository.findById(id)
+    @GetMapping("/{dni}")
+    public ResponseEntity<Paciente> getPacienteByDni(@PathVariable String dni) {
+        return pacienteRepository.findByDni(dni)
+                .stream()
+                .findFirst()
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -34,16 +37,17 @@ public class PacienteController {
         return ResponseEntity.ok(pacienteRepository.save(paciente));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Paciente> updatePaciente(@PathVariable Integer id, @RequestBody Paciente pacienteDetails) {
-        return pacienteRepository.findById(id)
+    @PutMapping("/{dni}")
+    public ResponseEntity<Paciente> updatePaciente(@PathVariable String dni, @RequestBody Paciente pacienteDetails) {
+        return pacienteRepository.findByDni(dni)
+                .stream()
+                .findFirst()
                 .map(paciente -> {
                     paciente.setNombre(pacienteDetails.getNombre());
                     paciente.setApellidos(pacienteDetails.getApellidos());
                     paciente.setFechaNacimiento(pacienteDetails.getFechaNacimiento());
                     paciente.setTelefono(pacienteDetails.getTelefono());
-                    paciente.setCp(pacienteDetails.getCp());
-                    paciente.setDni(pacienteDetails.getDni());
+                    paciente.setObraSocial(pacienteDetails.getObraSocial());
                     paciente.setMutua(pacienteDetails.getMutua());
                     paciente.setTipoPago(pacienteDetails.getTipoPago());
                     return ResponseEntity.ok(pacienteRepository.save(paciente));
@@ -51,10 +55,11 @@ public class PacienteController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePaciente(@PathVariable Integer id) {
-        if (pacienteRepository.existsById(id)) {
-            pacienteRepository.deleteById(id);
+    @DeleteMapping("/{dni}")
+    public ResponseEntity<Void> deletePaciente(@PathVariable String dni) {
+        List<Paciente> pacientes = pacienteRepository.findByDni(dni);
+        if (!pacientes.isEmpty()) {
+            pacienteRepository.delete(pacientes.get(0));
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();

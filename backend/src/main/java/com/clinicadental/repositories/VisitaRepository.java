@@ -15,6 +15,6 @@ public interface VisitaRepository extends JpaRepository<Visita, Integer> {
     List<Visita> findByOdontologo(Odontologo odontologo);
     List<Visita> findByEstado(String estado);
     List<Visita> findByFechaHoraBetween(LocalDateTime inicio, LocalDateTime fin);
-    List<Visita> findByPacienteIdAndEstado(Integer pacienteId, String estado);
+    List<Visita> findByPacienteDniAndEstado(String dni, String estado);
     List<Visita> findByOdontologoIdAndEstado(Integer odontologoId, String estado);
 }

@@ -2,6 +2,7 @@ package com.clinicadental.controllers;
 
 import com.clinicadental.dto.AuthResponse;
 import com.clinicadental.dto.LoginRequest;
+import com.clinicadental.models.Odontologo;
 import com.clinicadental.models.Usuario;
 import com.clinicadental.repositories.UsuarioRepository;
 import com.clinicadental.services.AuthService;
@@ -14,7 +15,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:3000", "http://127.0.0.1:3000"}, 
+             allowedHeaders = "*",
+             methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS},
+             allowCredentials = "true")
 public class AuthController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
@@ -52,11 +56,26 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Usuario usuario) {
-        logger.info("Recibida solicitud de registro para usuario: {}", usuario.getUsername());
+        logger.info("Recibida solicitud de registro para usuario: {} de tipo: {}", 
+            usuario.getUsername(), usuario.getTipo());
+        logger.info("Datos recibidos - Matrícula: {}, Especialidad: {}", 
+            usuario.getMatricula(), usuario.getEspecialidad());
         
         try {
+            // Validar campos específicos según el tipo de usuario
+            if ("Odontologo".equalsIgnoreCase(usuario.getTipo())) {
+                if (usuario.getMatricula() == null || usuario.getMatricula().trim().isEmpty()) {
+                    logger.error("Matrícula no proporcionada para odontólogo");
+                    return ResponseEntity.badRequest().body("La matrícula es obligatoria para odontólogos");
+                }
+                if (usuario.getEspecialidad() == null || usuario.getEspecialidad().trim().isEmpty()) {
+                    logger.error("Especialidad no proporcionada para odontólogo");
+                    return ResponseEntity.badRequest().body("La especialidad es obligatoria para odontólogos");
+                }
+            }
+            
             Usuario registeredUser = authService.register(usuario);
-            logger.info("Registro exitoso para: {}", usuario.getUsername());
+            logger.info("Registro exitoso para: {} como {}", usuario.getUsername(), usuario.getTipo());
             return ResponseEntity.ok(registeredUser);
         } catch (Exception e) {
             logger.error("Error en el registro: {}", e.getMessage(), e);

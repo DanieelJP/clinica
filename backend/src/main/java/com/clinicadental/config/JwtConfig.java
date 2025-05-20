@@ -29,7 +29,7 @@ public class JwtConfig implements UserDetailsService {
 
     public String extractUsername(String token) {
         try {
-            return extractClaim(token, Claims::getSubject);
+        return extractClaim(token, Claims::getSubject);
         } catch (Exception e) {
             logger.error("Error al extraer el username del token: {}", e.getMessage());
             return null;
@@ -44,7 +44,7 @@ public class JwtConfig implements UserDetailsService {
     public String generateToken(UserDetails userDetails) {
         try {
             logger.info("Generando token para usuario: {}", userDetails.getUsername());
-            return createToken(new HashMap<>(), userDetails);
+        return createToken(new HashMap<>(), userDetails);
         } catch (Exception e) {
             logger.error("Error al generar token: {}", e.getMessage());
             return "invalid-token";
@@ -70,7 +70,7 @@ public class JwtConfig implements UserDetailsService {
 
     public Boolean validateToken(String token, UserDetails userDetails) {
         try {
-            final String username = extractUsername(token);
+        final String username = extractUsername(token);
             boolean isValid = (username != null && username.equals(userDetails.getUsername()) && !isTokenExpired(token));
             logger.info("Token validation for user {}: {}", userDetails.getUsername(), isValid);
             return isValid;

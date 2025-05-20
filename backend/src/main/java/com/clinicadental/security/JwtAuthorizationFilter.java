@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthorizationFilter.class);
-    
+
     private static final String[] PUBLIC_PATHS = {
         "/api/auth/register",
         "/api/auth/login"

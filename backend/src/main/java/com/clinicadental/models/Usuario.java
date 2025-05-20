@@ -15,6 +15,8 @@ import java.util.List;
 @EqualsAndHashCode(of = "id")
 @Entity
 @Table(name = "Usuario")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "DTYPE")
 public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +25,7 @@ public class Usuario implements UserDetails {
     @Column(nullable = false, unique = true, length = 50)
     private String username;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String password;
 
     @Column(nullable = false, unique = true, length = 100)
@@ -35,6 +37,12 @@ public class Usuario implements UserDetails {
 
     @Transient
     private String tipo;
+
+    @Transient
+    private String matricula;
+
+    @Transient
+    private String especialidad;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

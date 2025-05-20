@@ -9,22 +9,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "Odontologo")
-@NoArgsConstructor
-@AllArgsConstructor
-public class Odontologo {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    
-    @Column(nullable = false)
-    private String nombre;
-    
-    @Column(nullable = false)
-    private String apellidos;
-
+@PrimaryKeyJoinColumn(name = "usuario_id")
+@DiscriminatorValue("Odontologo")
+public class Odontologo extends Usuario {
     @Column(nullable = false, unique = true, length = 50)
     private String matricula;
 

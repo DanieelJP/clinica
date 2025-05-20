@@ -2,6 +2,8 @@ package com.clinicadental.services;
 
 import com.clinicadental.config.JwtConfig;
 import com.clinicadental.models.Usuario;
+import com.clinicadental.models.Odontologo;
+import com.clinicadental.models.Administrativo;
 import com.clinicadental.repositories.UsuarioRepository;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -49,12 +51,12 @@ public class AuthService {
                 logger.info("Inicio de sesión exitoso para admin");
                 return jwtConfig.generateToken(usuario);
             }
-            
+        
             if (!passwordEncoder.matches(password, usuario.getPassword())) {
                 logger.error("Contraseña inválida para el usuario: {}", username);
                 throw new BadCredentialsException("Credenciales inválidas");
             }
-            
+        
             logger.info("Login exitoso para el usuario: {}", username);
             return jwtConfig.generateToken(usuario);
         } catch (Exception e) {
@@ -77,9 +79,39 @@ public class AuthService {
                 throw new RuntimeException("El email ya está registrado");
             }
             
-            usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-            Usuario usuarioGuardado = usuarioRepository.save(usuario);
-            logger.info("Usuario registrado exitosamente: {}", usuario.getUsername());
+            // Determinar el tipo de usuario y crear la instancia correspondiente
+            Usuario nuevoUsuario;
+            String tipo = usuario.getTipo();
+            
+            if ("Odontologo".equalsIgnoreCase(tipo)) {
+                if (usuario.getMatricula() == null || usuario.getMatricula().trim().isEmpty() ||
+                    usuario.getEspecialidad() == null || usuario.getEspecialidad().trim().isEmpty()) {
+                    throw new RuntimeException("Datos de odontólogo incompletos");
+                }
+                Odontologo odontologo = new Odontologo();
+                odontologo.setUsername(usuario.getUsername());
+                odontologo.setPassword(passwordEncoder.encode(usuario.getPassword()));
+                odontologo.setEmail(usuario.getEmail());
+                odontologo.setTipo("Odontologo");
+                odontologo.setMatricula(usuario.getMatricula());
+                odontologo.setEspecialidad(usuario.getEspecialidad());
+                nuevoUsuario = odontologo;
+                logger.info("Creando nuevo odontólogo con matrícula: {} y especialidad: {}", 
+                    usuario.getMatricula(), usuario.getEspecialidad());
+            } else if ("Administrativo".equalsIgnoreCase(tipo)) {
+                Administrativo administrativo = new Administrativo();
+                administrativo.setUsername(usuario.getUsername());
+                administrativo.setPassword(passwordEncoder.encode(usuario.getPassword()));
+                administrativo.setEmail(usuario.getEmail());
+                administrativo.setTipo("Administrativo");
+                administrativo.setDepartamento("Administración");
+                nuevoUsuario = administrativo;
+            } else {
+                throw new RuntimeException("Tipo de usuario no válido. Debe ser 'Odontologo' o 'Administrativo'");
+            }
+            
+            Usuario usuarioGuardado = usuarioRepository.save(nuevoUsuario);
+            logger.info("Usuario registrado exitosamente: {} como {}", usuario.getUsername(), tipo);
             return usuarioGuardado;
         } catch (Exception e) {
             logger.error("Error durante el registro: {}", e.getMessage(), e);

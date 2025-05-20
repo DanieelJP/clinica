@@ -43,7 +43,7 @@ public class VisitaController {
     @PostMapping
     public ResponseEntity<Visita> createVisita(@RequestBody Visita visita) {
         logger.info("Creando nueva visita para paciente: {}", 
-                    visita.getPaciente() != null ? visita.getPaciente().getId() : "desconocido");
+                    visita.getPaciente() != null ? visita.getPaciente().getDni() : "desconocido");
         return ResponseEntity.ok(visitaRepository.save(visita));
     }
 
@@ -74,10 +74,10 @@ public class VisitaController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/by-paciente/{pacienteId}")
-    public ResponseEntity<List<Visita>> getVisitasByPaciente(@PathVariable Integer pacienteId) {
-        logger.info("Obteniendo visitas por paciente ID: {}", pacienteId);
-        return ResponseEntity.ok(visitaRepository.findByPacienteIdAndEstado(pacienteId, "PROGRAMADA"));
+    @GetMapping("/by-paciente/{dni}")
+    public ResponseEntity<List<Visita>> getVisitasByPaciente(@PathVariable String dni) {
+        logger.info("Obteniendo visitas por paciente DNI: {}", dni);
+        return ResponseEntity.ok(visitaRepository.findByPacienteDniAndEstado(dni, "PROGRAMADA"));
     }
 
     @GetMapping("/by-odontologo/{odontologoId}")

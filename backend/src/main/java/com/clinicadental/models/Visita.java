@@ -15,7 +15,7 @@ public class Visita {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "paciente_id", nullable = false)
+    @JoinColumn(name = "paciente_dni", nullable = false)
     private Paciente paciente;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,7 +35,7 @@ public class Visita {
     @Column(columnDefinition = "TEXT")
     private String observaciones;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private String estado = "PROGRAMADA";
 
     public Visita() {

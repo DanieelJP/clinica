@@ -8,13 +8,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "dni")
 @Entity
 @Table(name = "Paciente")
 public class Paciente {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(nullable = false, unique = true, length = 20)
+    private String dni;
 
     @Column(nullable = false, length = 50)
     private String nombre;
@@ -28,22 +28,19 @@ public class Paciente {
     @Column(nullable = false, length = 20)
     private String telefono;
 
-    @Column(length = 10)
-    private String cp;
-
-    @Column(nullable = false, unique = true, length = 20)
-    private String dni;
+    @Column(length = 50)
+    private String obraSocial;
 
     @Column(length = 50)
     private String mutua;
 
-    @Column(name = "tipo_pago", nullable = false)
+    @Column(name = "tipo_pago", nullable = false, length = 20)
     private String tipoPago;
 
-    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Responsable> responsables = new HashSet<>();
 
-    @OneToMany(mappedBy = "paciente", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "paciente", fetch = FetchType.LAZY)
     private Set<Visita> visitas = new HashSet<>();
 
     public Paciente() {
