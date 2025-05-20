@@ -29,16 +29,23 @@ export enum DiaSemana {
   MARTES = 'MARTES',
   MIERCOLES = 'MIERCOLES',
   JUEVES = 'JUEVES',
-  VIERNES = 'VIERNES'
+  VIERNES = 'VIERNES',
+  SABADO = 'SABADO',
+  DOMINGO = 'DOMINGO'
 }
 
 // Tipo para Horario
 export interface Horario {
-  id: number;
-  odontologo: Odontologo;
-  dia: DiaSemana;
-  horaInicio: string; // Formato HH:MM
-  horaFin: string;    // Formato HH:MM
+  id?: number;
+  odontologo: {
+    id: number;
+  };
+  odontologo_id?: number;
+  dia: string;
+  diaSemana: DiaSemana;
+  horaInicio: string;
+  horaFin: string;
+  disponible: boolean;
 }
 
 // Enumeración para el tipo de pago
@@ -116,7 +123,7 @@ export interface RegisterRequest {
   username: string;
   password: string;
   email: string;
-  tipo: 'Administrativo' | 'Odontologo';
+  tipo: TipoUsuario;
   matricula?: string;
   especialidad?: string;
   departamento?: string;

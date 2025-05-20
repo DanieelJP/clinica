@@ -1,15 +1,14 @@
 package com.clinicadental.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import java.time.LocalTime;
 
-@Data
-@EqualsAndHashCode(of = "id")
 @Entity
 @Table(name = "Horario")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Horario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,10 +16,15 @@ public class Horario {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "odontologo_id", nullable = false)
+    @JsonBackReference
     private Odontologo odontologo;
 
     @Column(nullable = false)
-    private String diaSemana;
+    private String dia;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DiaSemana diaSemana;
 
     @Column(nullable = false)
     private LocalTime horaInicio;
@@ -29,8 +33,70 @@ public class Horario {
     private LocalTime horaFin;
 
     @Column(nullable = false)
-    private Boolean disponible = true;
+    private boolean disponible = true;
 
-    public Horario() {
+    // Constructor vacío requerido por JPA
+    public Horario() {}
+
+    // Getters y Setters
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Odontologo getOdontologo() {
+        return odontologo;
+    }
+
+    public void setOdontologo(Odontologo odontologo) {
+        this.odontologo = odontologo;
+    }
+
+    @JsonProperty("odontologo_id")
+    public Integer getOdontologoId() {
+        return odontologo != null ? odontologo.getId() : null;
+    }
+
+    public String getDia() {
+        return dia;
+    }
+
+    public void setDia(String dia) {
+        this.dia = dia;
+    }
+
+    public DiaSemana getDiaSemana() {
+        return diaSemana;
+    }
+
+    public void setDiaSemana(DiaSemana diaSemana) {
+        this.diaSemana = diaSemana;
+    }
+
+    public LocalTime getHoraInicio() {
+        return horaInicio;
+    }
+
+    public void setHoraInicio(LocalTime horaInicio) {
+        this.horaInicio = horaInicio;
+    }
+
+    public LocalTime getHoraFin() {
+        return horaFin;
+    }
+
+    public void setHoraFin(LocalTime horaFin) {
+        this.horaFin = horaFin;
+    }
+
+    public boolean isDisponible() {
+        return disponible;
+    }
+
+    public void setDisponible(boolean disponible) {
+        this.disponible = disponible;
     }
 }

@@ -35,16 +35,14 @@ public class AuthService {
         logger.info("Intentando iniciar sesión con username: {}", username);
         
         try {
-            // Comprobar que el repositorio esté correctamente configurado
-            logger.info("Buscando usuario en la base de datos: {}", username);
-            boolean userExists = usuarioRepository.existsByUsername(username);
-            logger.info("Usuario existe en base de datos? {}", userExists);
-            
-            Usuario usuario = usuarioRepository.findByUsername(username)
+            // Primero intentamos cargar como Odontologo
+        Usuario usuario = usuarioRepository.findByUsername(username)
                     .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
             
-            logger.info("Usuario encontrado: {}, id: {}", usuario.getUsername(), usuario.getId());
-            logger.info("Contraseña almacenada: {}", usuario.getPassword());
+            logger.info("Usuario encontrado: {}, id: {}, tipo: {}", 
+                usuario.getUsername(), 
+                usuario.getId(),
+                usuario.getClass().getSimpleName());
             
             // Para pruebas, aceptamos cualquier contraseña para el usuario admin
             if ("admin".equals(username)) {
@@ -52,13 +50,15 @@ public class AuthService {
                 return jwtConfig.generateToken(usuario);
             }
         
-            if (!passwordEncoder.matches(password, usuario.getPassword())) {
+        if (!passwordEncoder.matches(password, usuario.getPassword())) {
                 logger.error("Contraseña inválida para el usuario: {}", username);
                 throw new BadCredentialsException("Credenciales inválidas");
-            }
+        }
         
-            logger.info("Login exitoso para el usuario: {}", username);
-            return jwtConfig.generateToken(usuario);
+            logger.info("Login exitoso para el usuario: {} de tipo: {}", 
+                username, 
+                usuario.getClass().getSimpleName());
+        return jwtConfig.generateToken(usuario);
         } catch (Exception e) {
             logger.error("Error durante el login: {}", e.getMessage(), e);
             throw e;
@@ -69,15 +69,15 @@ public class AuthService {
         logger.info("Intentando registrar nuevo usuario: {}", usuario.getUsername());
         
         try {
-            if (usuarioRepository.existsByUsername(usuario.getUsername())) {
+        if (usuarioRepository.existsByUsername(usuario.getUsername())) {
                 logger.error("El nombre de usuario ya existe: {}", usuario.getUsername());
-                throw new RuntimeException("El nombre de usuario ya existe");
-            }
+            throw new RuntimeException("El nombre de usuario ya existe");
+        }
             
-            if (usuarioRepository.existsByEmail(usuario.getEmail())) {
+        if (usuarioRepository.existsByEmail(usuario.getEmail())) {
                 logger.error("El email ya está registrado: {}", usuario.getEmail());
-                throw new RuntimeException("El email ya está registrado");
-            }
+            throw new RuntimeException("El email ya está registrado");
+        }
             
             // Determinar el tipo de usuario y crear la instancia correspondiente
             Usuario nuevoUsuario;

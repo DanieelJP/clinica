@@ -15,6 +15,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Pacientes from './pages/Pacientes';
+import Horarios from './pages/Horarios';
 
 // Definir tema
 const theme = createTheme({
@@ -44,6 +45,7 @@ function App() {
               <Route element={<ProtectedRoute />}>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/pacientes" element={<Pacientes />} />
+                <Route path="/horarios" element={<Horarios />} />
                 {/* Aquí se añadirán más rutas protegidas */}
               </Route>
               

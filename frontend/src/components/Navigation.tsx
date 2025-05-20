@@ -43,6 +43,9 @@ const Navigation: React.FC = () => {
               <Button color="inherit" component={Link} to="/visitas">
                 Visitas
               </Button>
+              <Button color="inherit" component={Link} to="/horarios">
+                Horarios
+              </Button>
               
               {/* Enlaces específicos para administrativos */}
               {user?.tipo === TipoUsuario.ADMINISTRATIVO && (

@@ -16,7 +16,7 @@ import {
   Typography,
   Alert,
 } from '@mui/material';
-import { RegisterRequest } from '../types/models';
+import { RegisterRequest, TipoUsuario } from '../types/models';
 import authService from '../services/authService';
 
 // Crear un componente Grid compatible con la versión actual de Material-UI
@@ -38,17 +38,17 @@ const RegisterSchema = Yup.object().shape({
     .email('Email inválido')
     .required('El email es obligatorio'),
   tipo: Yup.string()
-    .oneOf(['Administrativo', 'Odontologo'], 'Tipo de usuario inválido')
+    .oneOf([TipoUsuario.ADMINISTRATIVO, TipoUsuario.ODONTOLOGO], 'Tipo de usuario inválido')
     .required('El tipo de usuario es obligatorio'),
   matricula: Yup.string()
     .when('tipo', {
-      is: 'Odontologo',
+      is: TipoUsuario.ODONTOLOGO,
       then: (schema) => schema.required('La matrícula es obligatoria'),
       otherwise: (schema) => schema.notRequired(),
     }),
   especialidad: Yup.string()
     .when('tipo', {
-      is: 'Odontologo',
+      is: TipoUsuario.ODONTOLOGO,
       then: (schema) => schema.required('La especialidad es obligatoria'),
       otherwise: (schema) => schema.notRequired(),
     }),
@@ -64,7 +64,7 @@ const Register: React.FC = () => {
     password: '',
     confirmPassword: '',
     email: '',
-    tipo: 'Administrativo',
+    tipo: TipoUsuario.ADMINISTRATIVO,
     matricula: '',
     especialidad: '',
   };
@@ -176,14 +176,14 @@ const Register: React.FC = () => {
                       value={values.tipo}
                       onChange={handleChange}
                     >
-                      <MenuItem value="Administrativo">Administrativo</MenuItem>
-                      <MenuItem value="Odontologo">Odontólogo</MenuItem>
+                      <MenuItem value={TipoUsuario.ADMINISTRATIVO}>Administrativo</MenuItem>
+                      <MenuItem value={TipoUsuario.ODONTOLOGO}>Odontólogo</MenuItem>
                     </Field>
                     <ErrorMessage name="tipo" component={FormHelperText} />
                   </FormControl>
                 </Grid>
 
-                {values.tipo === 'Odontologo' && (
+                {values.tipo === TipoUsuario.ODONTOLOGO && (
                   <>
                     <Grid item xs={12}>
                       <Field
@@ -198,11 +198,11 @@ const Register: React.FC = () => {
                     </Grid>
 
                     <Grid item xs={12}>
-                      <Field
+                        <Field
                         as={TextField}
                         fullWidth
-                        name="especialidad"
-                        label="Especialidad"
+                          name="especialidad"
+                          label="Especialidad"
                         variant="outlined"
                         error={touched.especialidad && Boolean(errors.especialidad)}
                         helperText={touched.especialidad && errors.especialidad}
@@ -212,15 +212,15 @@ const Register: React.FC = () => {
                 )}
 
                 <Grid item xs={12}>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
                     fullWidth
                     disabled={isSubmitting}
-                  >
+                    >
                     {isSubmitting ? 'Registrando...' : 'Registrar'}
-                  </Button>
+                    </Button>
                 </Grid>
               </Grid>
             </Form>

@@ -3,6 +3,7 @@ package com.clinicadental.controllers;
 import com.clinicadental.dto.AuthResponse;
 import com.clinicadental.dto.LoginRequest;
 import com.clinicadental.models.Odontologo;
+import com.clinicadental.models.Administrativo;
 import com.clinicadental.models.Usuario;
 import com.clinicadental.repositories.UsuarioRepository;
 import com.clinicadental.services.AuthService;
@@ -35,17 +36,35 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         logger.info("Recibida solicitud de login para usuario: {}", loginRequest.getUsername());
-        
+
         try {
             String token = authService.login(loginRequest.getUsername(), loginRequest.getPassword());
             Usuario usuario = usuarioRepository.findByUsername(loginRequest.getUsername())
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-            
-            // Establecer valores para campos transientes
-            usuario.setTipo("ADMINISTRATIVO");
-            
+
+            String tipoUsuario = usuario.getClass().getSimpleName();
+            logger.info("Clase del usuario: {} para usuario {}", tipoUsuario, usuario.getUsername());
+
+            // Establecer el tipo y los campos específicos según el tipo de usuario
+            if (usuario instanceof Odontologo odontologo) {
+                usuario.setTipo("ODONTOLOGO");
+                usuario.setMatricula(odontologo.getMatricula());
+                usuario.setEspecialidad(odontologo.getEspecialidad());
+                // Limpiar las colecciones para evitar bucles de serialización
+                odontologo.setHorarios(null);
+                odontologo.setVisitas(null);
+                logger.info("Usuario es odontólogo con matrícula: {} y especialidad: {}", 
+                    odontologo.getMatricula(), odontologo.getEspecialidad());
+            } else if (usuario instanceof Administrativo) {
+                usuario.setTipo("ADMINISTRATIVO");
+                logger.info("Usuario es administrativo");
+            } else {
+                logger.error("Tipo de usuario desconocido: {}", tipoUsuario);
+                throw new RuntimeException("Tipo de usuario desconocido");
+            }
+
             AuthResponse response = new AuthResponse(token, usuario);
-            logger.info("Login exitoso para: {}", loginRequest.getUsername());
+            logger.info("Login exitoso para: {} como {}", loginRequest.getUsername(), usuario.getTipo());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             logger.error("Error en el login: {}", e.getMessage(), e);

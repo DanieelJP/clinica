@@ -17,7 +17,9 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    console.log('Enviando solicitud a:', config.url, 'con método:', config.method);
+    // Asegurarse de que el Content-Type esté establecido para todas las peticiones
+    config.headers['Content-Type'] = 'application/json';
+    console.log('Enviando solicitud a:', config.url, 'con método:', config.method, 'headers:', config.headers);
     return config;
   },
   (error) => {
@@ -39,12 +41,12 @@ api.interceptors.response.use(
       console.error('Status:', error.response.status);
       console.error('Datos:', error.response.data);
       
-    // Si el error es 401 (Unauthorized), redirigir al login
+      // Si el error es 401 (Unauthorized), redirigir al login
       if (error.response.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
-    }
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      }
       
       // Si el error es 403 (Forbidden)
       if (error.response.status === 403) {
