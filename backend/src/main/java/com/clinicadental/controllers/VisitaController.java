@@ -60,6 +60,10 @@ public class VisitaController {
             Visita visita = new Visita();
             visita.setObservaciones(visitaDTO.getObservaciones());
             
+            if (visitaDTO.getTratamiento_id() != null) {
+                visita.setTratamiento(visitaService.obtenerVisitaPorId(id).getTratamiento());
+            }
+            
             Visita updatedVisita = visitaService.actualizarVisita(id, visita);
             return ResponseEntity.ok(updatedVisita);
         } catch (RuntimeException e) {
@@ -69,30 +73,69 @@ public class VisitaController {
         }
     }
 
+    @PutMapping("/{id}/estado")
+    public ResponseEntity<?> updateEstadoVisita(
+            @PathVariable Integer id,
+            @RequestParam Visita.EstadoVisita estado) {
+        try {
+            logger.info("Actualizando estado de visita {} a {}", id, estado);
+            Visita visita = new Visita();
+            visita.setEstado(estado);
+            Visita updatedVisita = visitaService.actualizarVisita(id, visita);
+            return ResponseEntity.ok(updatedVisita);
+        } catch (RuntimeException e) {
+            logger.error("Error al actualizar estado de visita: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
+    }
+
     @GetMapping("/odontologo/{odontologoId}")
-    public ResponseEntity<List<Visita>> getVisitasByOdontologo(@PathVariable Integer odontologoId) {
-        logger.info("Recibida solicitud para obtener visitas del odontólogo: {}", odontologoId);
-        return ResponseEntity.ok(visitaService.obtenerVisitasPorOdontologo(odontologoId));
+    public ResponseEntity<?> getVisitasByOdontologo(@PathVariable Integer odontologoId) {
+        try {
+            logger.info("Recibida solicitud para obtener visitas del odontólogo: {}", odontologoId);
+            List<Visita> visitas = visitaService.obtenerVisitasPorOdontologo(odontologoId);
+            return ResponseEntity.ok(visitas);
+        } catch (RuntimeException e) {
+            logger.error("Error al obtener visitas del odontólogo: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
     }
 
     @GetMapping("/paciente/{dni}")
-    public ResponseEntity<List<Visita>> getVisitasByPaciente(@PathVariable String dni) {
-        logger.info("Recibida solicitud para obtener visitas del paciente: {}", dni);
-        return ResponseEntity.ok(visitaService.obtenerVisitasPorPaciente(dni));
+    public ResponseEntity<?> getVisitasByPaciente(@PathVariable String dni) {
+        try {
+            logger.info("Recibida solicitud para obtener visitas del paciente: {}", dni);
+            List<Visita> visitas = visitaService.obtenerVisitasPorPaciente(dni);
+            return ResponseEntity.ok(visitas);
+        } catch (RuntimeException e) {
+            logger.error("Error al obtener visitas del paciente: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
     }
 
     @GetMapping("/fecha/{fecha}")
-    public ResponseEntity<List<Visita>> getVisitasByDate(
+    public ResponseEntity<?> getVisitasByDate(
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
-        logger.info("Recibida solicitud para obtener visitas de la fecha: {}", fecha);
-        return ResponseEntity.ok(visitaService.obtenerVisitasPorFecha(fecha.atStartOfDay()));
+        try {
+            logger.info("Recibida solicitud para obtener visitas de la fecha: {}", fecha);
+            List<Visita> visitas = visitaService.obtenerVisitasPorFecha(fecha.atStartOfDay());
+            return ResponseEntity.ok(visitas);
+        } catch (RuntimeException e) {
+            logger.error("Error al obtener visitas por fecha: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
+        }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getVisitaById(@PathVariable Integer id) {
         try {
             logger.info("Recibida solicitud para obtener visita con ID: {}", id);
-            return ResponseEntity.ok(visitaService.obtenerVisitaPorId(id));
+            Visita visita = visitaService.obtenerVisitaPorId(id);
+            return ResponseEntity.ok(visita);
         } catch (RuntimeException e) {
             logger.error("Error al obtener visita: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

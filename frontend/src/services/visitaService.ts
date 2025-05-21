@@ -6,10 +6,7 @@ const API_URL = 'http://localhost:8080/api';
 export const visitaService = {
     async createVisit(visitData: VisitFormData): Promise<Visita> {
         try {
-            const response = await axios.post(`${API_URL}/visitas`, {
-                ...visitData,
-                estado: EstadoVisita.PROGRAMADA
-            });
+            const response = await axios.post(`${API_URL}/visitas`, visitData);
             return response.data;
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
@@ -28,6 +25,18 @@ export const visitaService = {
                 throw new Error(error.response.data);
             }
             throw new Error('Error al actualizar la visita');
+        }
+    },
+
+    async updateVisitStatus(id: number, estado: EstadoVisita): Promise<Visita> {
+        try {
+            const response = await axios.put(`${API_URL}/visitas/${id}/estado?estado=${estado}`);
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                throw new Error(error.response.data);
+            }
+            throw new Error('Error al actualizar el estado de la visita');
         }
     },
 
@@ -63,7 +72,7 @@ export const visitaService = {
             if (axios.isAxiosError(error) && error.response) {
                 throw new Error(error.response.data);
             }
-            throw new Error('Error al obtener las visitas de la fecha');
+            throw new Error('Error al obtener las visitas por fecha');
         }
     },
 

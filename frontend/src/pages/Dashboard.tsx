@@ -123,7 +123,7 @@ const Dashboard: React.FC = () => {
                     <React.Fragment key={visita.id}>
                       <ListItem>
                         <ListItemText
-                          primary={`${format(new Date(visita.fechaHora), 'HH:mm')} - ${visita.paciente.nombre} ${visita.paciente.apellidos}`}
+                          primary={`${format(new Date(visita.fechaHora), 'HH:mm')} - ${visita.paciente?.nombre || 'N/A'} ${visita.paciente?.apellidos || ''}`}
                           secondary={`Motivo: ${visita.motivo} | Estado: ${visita.estado}`}
                         />
                       </ListItem>
@@ -149,7 +149,7 @@ const Dashboard: React.FC = () => {
                     <React.Fragment key={visita.id}>
                       <ListItem>
                         <ListItemText
-                          primary={`${format(new Date(visita.fechaHora), 'dd/MM/yyyy HH:mm')} - ${visita.paciente.nombre} ${visita.paciente.apellidos}`}
+                          primary={`${format(new Date(visita.fechaHora), 'dd/MM/yyyy HH:mm')} - ${visita.paciente?.nombre || 'N/A'} ${visita.paciente?.apellidos || ''}`}
                           secondary={`Motivo: ${visita.motivo}`}
                         />
                       </ListItem>

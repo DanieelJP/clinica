@@ -17,6 +17,7 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { es } from 'date-fns/locale';
+import { format } from 'date-fns';
 import { Visita, VisitFormData, EstadoVisita } from '../types/models';
 
 interface EditVisitDialogProps {
@@ -76,13 +77,14 @@ const EditVisitDialog: React.FC<EditVisitDialogProps> = ({
     const handleSubmit = async () => {
         if (!selectedDate) return;
 
+        const formattedFechaHora = format(selectedDate, "yyyy-MM-dd'T'HH:mm:ss");
+
         const visitData: VisitFormData & { estado?: EstadoVisita } = {
             ...formData,
-            fechaHora: selectedDate.toISOString()
+            fechaHora: formattedFechaHora
         };
 
         await onSave(visitData);
-        onClose();
     };
 
     return (
@@ -97,6 +99,7 @@ const EditVisitDialog: React.FC<EditVisitDialogProps> = ({
                         value={formData.paciente_dni}
                         onChange={handleInputChange}
                         required
+                        disabled
                     />
                     <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
                         <DateTimePicker

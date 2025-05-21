@@ -22,12 +22,14 @@ import {
     Select,
     FormControl,
     InputLabel,
-    SelectChangeEvent
+    SelectChangeEvent,
+    Chip
 } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { es } from 'date-fns/locale';
+import { format } from 'date-fns';
 import { visitaService } from '../services/visitaService';
 import { Visita, VisitFormData, EstadoVisita } from '../types/models';
 import { useAuth } from '../context/AuthContext';
@@ -59,6 +61,7 @@ const Visitas: React.FC = () => {
         try {
             if (user?.tipo === 'ODONTOLOGO') {
                 const data = await visitaService.getVisitsByDentist(user.id);
+                console.log("Visitas recibidas del backend:", data);
                 setVisits(data);
             }
         } catch (error) {
@@ -99,9 +102,11 @@ const Visitas: React.FC = () => {
                 return;
             }
 
+            const formattedFechaHora = format(selectedDate, "yyyy-MM-dd'T'HH:mm:ss");
+
             const visitData: VisitFormData = {
                 ...formData,
-                fechaHora: selectedDate.toISOString()
+                fechaHora: formattedFechaHora
             };
 
             await visitaService.createVisit(visitData);
@@ -135,11 +140,26 @@ const Visitas: React.FC = () => {
 
     const handleEstadoChange = async (visit: Visita, e: SelectChangeEvent<EstadoVisita>) => {
         try {
-            await visitaService.updateVisit(visit.id, { estado: e.target.value as EstadoVisita });
+            await visitaService.updateVisitStatus(visit.id, e.target.value as EstadoVisita);
             setSuccess('Estado actualizado exitosamente');
             loadVisits();
         } catch (error) {
             setError(error instanceof Error ? error.message : 'Error al actualizar el estado');
+        }
+    };
+
+    const getEstadoColor = (estado: EstadoVisita) => {
+        switch (estado) {
+            case EstadoVisita.PROGRAMADA:
+                return 'primary';
+            case EstadoVisita.REALIZADA:
+                return 'success';
+            case EstadoVisita.CANCELADA:
+                return 'error';
+            case EstadoVisita.NO_ASISTIO:
+                return 'warning';
+            default:
+                return 'default';
         }
     };
 
@@ -183,18 +203,11 @@ const Visitas: React.FC = () => {
                                 </TableCell>
                                 <TableCell>{visit.motivo}</TableCell>
                                 <TableCell>
-                                    <FormControl size="small" fullWidth>
-                                        <Select
-                                            value={visit.estado}
-                                            onChange={(e) => handleEstadoChange(visit, e as SelectChangeEvent<EstadoVisita>)}
-                                        >
-                                            {Object.values(EstadoVisita).map((estado) => (
-                                                <MenuItem key={estado} value={estado}>
-                                                    {estado}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
+                                    <Chip
+                                        label={visit.estado}
+                                        color={getEstadoColor(visit.estado)}
+                                        size="small"
+                                    />
                                 </TableCell>
                                 <TableCell>
                                     <Button
@@ -205,6 +218,19 @@ const Visitas: React.FC = () => {
                                     >
                                         Editar
                                     </Button>
+                                    <FormControl size="small" sx={{ minWidth: 120 }}>
+                                        <Select
+                                            value={visit.estado}
+                                            onChange={(e) => handleEstadoChange(visit, e as SelectChangeEvent<EstadoVisita>)}
+                                            size="small"
+                                        >
+                                            {Object.values(EstadoVisita).map((estado) => (
+                                                <MenuItem key={estado} value={estado}>
+                                                    {estado}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
                                 </TableCell>
                             </TableRow>
                         ))}

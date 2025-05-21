@@ -95,8 +95,9 @@ export interface Tratamiento {
 // Enumeración para el estado de la visita
 export enum EstadoVisita {
   PROGRAMADA = 'PROGRAMADA',
-  COMPLETADA = 'COMPLETADA',
-  CANCELADA = 'CANCELADA'
+  REALIZADA = 'REALIZADA',
+  CANCELADA = 'CANCELADA',
+  NO_ASISTIO = 'NO_ASISTIO'
 }
 
 // Tipo para Visita

@@ -2,11 +2,12 @@ package com.clinicadental.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.time.LocalDateTime;
 
 @Data
-@EqualsAndHashCode(of = "id")
+@NoArgsConstructor
 @Entity
 @Table(name = "Visita")
 public class Visita {
@@ -16,10 +17,12 @@ public class Visita {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "paciente_dni", nullable = false)
+    @JsonBackReference
     private Paciente paciente;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "odontologo_id", nullable = false)
+    @JsonBackReference
     private Odontologo odontologo;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -36,8 +39,13 @@ public class Visita {
     private String observaciones;
 
     @Column(nullable = false, length = 20)
-    private String estado = "PROGRAMADA";
+    @Enumerated(EnumType.STRING)
+    private EstadoVisita estado = EstadoVisita.PROGRAMADA;
 
-    public Visita() {
+    public enum EstadoVisita {
+        PROGRAMADA,
+        REALIZADA,
+        CANCELADA,
+        NO_ASISTIO
     }
 }

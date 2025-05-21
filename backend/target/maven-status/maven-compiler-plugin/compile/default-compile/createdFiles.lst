@@ -7,11 +7,13 @@ com/clinicadental/models/Odontologo.class
 com/clinicadental/models/Horario.class
 com/clinicadental/models/Usuario.class
 com/clinicadental/services/HorarioService.class
+com/clinicadental/models/Visita$EstadoVisita.class
 com/clinicadental/services/AuthService.class
 com/clinicadental/dto/AuthResponse.class
 com/clinicadental/models/Tratamiento.class
 com/clinicadental/controllers/VisitaController.class
 com/clinicadental/config/JacksonConfig.class
+com/clinicadental/services/VisitaService$1.class
 com/clinicadental/repositories/PacienteRepository.class
 com/clinicadental/controllers/AuthController.class
 com/clinicadental/config/SecurityConfig.class
