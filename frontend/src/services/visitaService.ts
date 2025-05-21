@@ -86,5 +86,16 @@ export const visitaService = {
             }
             throw new Error('Error al obtener la visita');
         }
+    },
+
+    async deleteVisit(id: number): Promise<void> {
+        try {
+            await axios.delete(`${API_URL}/visitas/${id}`);
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                throw new Error(error.response.data);
+            }
+            throw new Error('Error al eliminar la visita');
+        }
     }
 };

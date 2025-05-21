@@ -144,4 +144,97 @@ public class HorarioController {
         horarioService.actualizarDisponibilidad(horarioId, disponible);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteHorario(@PathVariable Integer id) {
+        try {
+            logger.info("Recibida solicitud para eliminar horario con ID: {}", id);
+            horarioService.eliminarHorario(id);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            logger.error("Error al eliminar horario: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateHorario(@PathVariable Integer id, @RequestBody HorarioDTO horarioDTO) {
+        try {
+            logger.info("Recibida solicitud para actualizar horario con ID: {}", id);
+            logger.info("Datos recibidos para actualización: {}", horarioDTO);
+
+            Horario horarioDetails = new Horario();
+
+            // Convertir el string a enum DiaSemana si está presente
+            if (horarioDTO.getDiaSemana() != null) {
+                try {
+                    DiaSemana diaSemana = DiaSemana.fromString(horarioDTO.getDiaSemana());
+                    horarioDetails.setDiaSemana(diaSemana);
+                    logger.info("Día de la semana para actualización convertido exitosamente: {}", diaSemana);
+                } catch (IllegalArgumentException e) {
+                    logger.error("Error al convertir diaSemana para actualización: {}", horarioDTO.getDiaSemana());
+                    return ResponseEntity.badRequest().body("Día de la semana inválido: " + horarioDTO.getDiaSemana());
+                }
+            }
+
+            // Intentar parsear las horas si están presentes
+            if (horarioDTO.getHoraInicio() != null && !horarioDTO.getHoraInicio().trim().isEmpty()) {
+                LocalTime horaInicio = null;
+                 for (DateTimeFormatter formatter : TIME_FORMATTERS) {
+                    try {
+                        String horaInicioStr = horarioDTO.getHoraInicio().trim();
+                        horaInicio = LocalTime.parse(horaInicioStr, formatter);
+                        logger.info("Hora de inicio para actualización parseada exitosamente: {}", horaInicio);
+                        break;
+                    } catch (DateTimeParseException e) {
+                        logger.warn("Error al parsear hora de inicio con formato {}: {}", formatter.toString(), e.getMessage());
+                        continue;
+                    }
+                }
+                 if (horaInicio == null) {
+                     return ResponseEntity.badRequest().body("Formato de hora de inicio inválido. Use HH:mm o HH:mm:ss");
+                 }
+                 horarioDetails.setHoraInicio(horaInicio);
+            }
+
+            if (horarioDTO.getHoraFin() != null && !horarioDTO.getHoraFin().trim().isEmpty()) {
+                LocalTime horaFin = null;
+                 for (DateTimeFormatter formatter : TIME_FORMATTERS) {
+                    try {
+                        String horaFinStr = horarioDTO.getHoraFin().trim();
+                        horaFin = LocalTime.parse(horaFinStr, formatter);
+                        logger.info("Hora de fin para actualización parseada exitosamente: {}", horaFin);
+                        break;
+                    } catch (DateTimeParseException e) {
+                        logger.warn("Error al parsear hora de fin con formato {}: {}", formatter.toString(), e.getMessage());
+                         continue;
+                    }
+                }
+                if (horaFin == null) {
+                    return ResponseEntity.badRequest().body("Formato de hora de fin inválido. Use HH:mm o HH:mm:ss");
+                }
+                horarioDetails.setHoraFin(horaFin);
+            }
+
+            // Actualizar el estado disponible si está presente
+            if (horarioDTO.isDisponible() != horarioService.obtenerHorarioPorId(id).isDisponible()) { // Only update if value is different
+                 horarioDetails.setDisponible(horarioDTO.isDisponible());
+            } else { // If not provided in DTO, keep the existing value
+                 horarioDetails.setDisponible(horarioService.obtenerHorarioPorId(id).isDisponible()); // Keep existing availability
+            }
+
+
+            Horario updatedHorario = horarioService.actualizarHorario(id, horarioDetails);
+            String updatedHorarioJson = objectMapper.writeValueAsString(updatedHorario);
+            logger.info("Horario actualizado exitosamente: {}", updatedHorarioJson);
+
+            return ResponseEntity.ok(updatedHorario);
+        } catch (JsonProcessingException e) {
+            logger.error("Error al procesar JSON para actualización: {}", e.getMessage(), e);
+            return ResponseEntity.badRequest().body("Error al procesar los datos del horario: " + e.getMessage());
+        } catch (RuntimeException e) {
+            logger.error("Error al actualizar horario: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 } 

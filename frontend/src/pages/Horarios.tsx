@@ -110,6 +110,7 @@ const Horarios: React.FC = () => {
     e.preventDefault();
     try {
       const horarioData: Horario = {
+        id: currentHorario.id,
         odontologo_id: user?.id || 0,
         dia: currentHorario.diaSemana.toString(),
         diaSemana: currentHorario.diaSemana,
@@ -119,19 +120,33 @@ const Horarios: React.FC = () => {
       };
 
       console.log('Enviando horario:', horarioData);
-      await horarioService.crearHorario(horarioData);
+
+      if (currentHorario.id) {
+        // Updating existing horario
+        await horarioService.actualizarHorario(currentHorario.id, horarioData);
+        setSnackbar({
+          open: true,
+          message: 'Horario actualizado exitosamente',
+          severity: 'success'
+        });
+      } else {
+        // Creating new horario
+        await horarioService.crearHorario(horarioData);
+        setSnackbar({
+          open: true,
+          message: 'Horario creado exitosamente',
+          severity: 'success'
+        });
+      }
+
       setOpenDialog(false);
-      loadHorarios();
-      setSnackbar({
-        open: true,
-        message: 'Horario creado exitosamente',
-        severity: 'success'
-      });
+      loadHorarios(); // Refresh the list
+
     } catch (error) {
-      console.error('Error al crear horario:', error);
+      console.error('Error al guardar horario:', error);
       setSnackbar({
         open: true,
-        message: 'Error al crear el horario',
+        message: `Error al guardar el horario: ${error instanceof Error ? error.message : String(error)}`,
         severity: 'error'
       });
     }
@@ -140,18 +155,18 @@ const Horarios: React.FC = () => {
   const handleDelete = async (id: number) => {
     if (window.confirm('¿Está seguro de eliminar este horario?')) {
       try {
-        await horarioService.actualizarDisponibilidad(id, false);
-        loadHorarios();
+        await horarioService.eliminarHorario(id);
+        loadHorarios(); // Refresh the list
         setSnackbar({
           open: true,
           message: 'Horario eliminado exitosamente',
           severity: 'success'
         });
       } catch (err) {
-        console.error('Error:', err);
+        console.error('Error al eliminar horario:', err);
         setSnackbar({
           open: true,
-          message: 'Error al eliminar el horario',
+          message: `Error al eliminar el horario: ${err instanceof Error ? err.message : String(err)}`,
           severity: 'error'
         });
       }

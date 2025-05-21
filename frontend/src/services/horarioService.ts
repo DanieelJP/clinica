@@ -38,5 +38,14 @@ export const horarioService = {
         await api.put(`/horarios/${horarioId}/disponibilidad`, null, {
             params: { disponible }
         });
+    },
+
+    async actualizarHorario(id: number, horario: Horario): Promise<Horario> {
+        const response = await api.put(`/horarios/${id}`, horario);
+        return response.data;
+    },
+
+    async eliminarHorario(id: number): Promise<void> {
+        await api.delete(`/horarios/${id}`);
     }
 }; 

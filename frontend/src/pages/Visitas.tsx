@@ -130,6 +130,18 @@ const Visitas: React.FC = () => {
         }
     };
 
+    const handleDeleteVisit = async (visitId: number) => {
+        if (window.confirm('¿Está seguro de que desea eliminar esta visita?')) {
+            try {
+                await visitaService.deleteVisit(visitId);
+                setSuccess('Visita eliminada exitosamente');
+                loadVisits();
+            } catch (error) {
+                setError(error instanceof Error ? error.message : 'Error al eliminar la visita');
+            }
+        }
+    };
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -210,27 +222,36 @@ const Visitas: React.FC = () => {
                                     />
                                 </TableCell>
                                 <TableCell>
-                                    <Button
-                                        variant="outlined"
-                                        size="small"
-                                        onClick={() => handleEditClick(visit)}
-                                        sx={{ mr: 1 }}
-                                    >
-                                        Editar
-                                    </Button>
-                                    <FormControl size="small" sx={{ minWidth: 120 }}>
-                                        <Select
-                                            value={visit.estado}
-                                            onChange={(e) => handleEstadoChange(visit, e as SelectChangeEvent<EstadoVisita>)}
+                                    <Stack direction="row" spacing={1}>
+                                        <Button
+                                            variant="outlined"
                                             size="small"
+                                            onClick={() => handleEditClick(visit)}
                                         >
-                                            {Object.values(EstadoVisita).map((estado) => (
-                                                <MenuItem key={estado} value={estado}>
-                                                    {estado}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
+                                            Editar
+                                        </Button>
+                                        <Button
+                                            variant="outlined"
+                                            color="error"
+                                            size="small"
+                                            onClick={() => handleDeleteVisit(visit.id)}
+                                        >
+                                            Eliminar
+                                        </Button>
+                                        <FormControl size="small" sx={{ minWidth: 120 }}>
+                                            <Select
+                                                value={visit.estado}
+                                                onChange={(e) => handleEstadoChange(visit, e as SelectChangeEvent<EstadoVisita>)}
+                                                size="small"
+                                            >
+                                                {Object.values(EstadoVisita).map((estado) => (
+                                                    <MenuItem key={estado} value={estado}>
+                                                        {estado}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </Stack>
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -299,7 +320,7 @@ const Visitas: React.FC = () => {
                 autoHideDuration={6000}
                 onClose={() => setError(null)}
             >
-                <Alert severity="error" onClose={() => setError(null)}>
+                <Alert onClose={() => setError(null)} severity="error">
                     {error}
                 </Alert>
             </Snackbar>
@@ -309,7 +330,7 @@ const Visitas: React.FC = () => {
                 autoHideDuration={6000}
                 onClose={() => setSuccess(null)}
             >
-                <Alert severity="success" onClose={() => setSuccess(null)}>
+                <Alert onClose={() => setSuccess(null)} severity="success">
                     {success}
                 </Alert>
             </Snackbar>

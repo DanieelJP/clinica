@@ -98,4 +98,60 @@ public class HorarioService {
         horario.setDisponible(disponible);
         horarioRepository.save(horario);
     }
+
+    @Transactional
+    public Horario actualizarHorario(Integer id, Horario horarioDetails) {
+        logger.info("Actualizando horario con ID: {}", id);
+        try {
+            return horarioRepository.findById(id)
+                .map(horario -> {
+                    if (horarioDetails.getDia() != null) {
+                        horario.setDia(horarioDetails.getDia());
+                    }
+                     if (horarioDetails.getDiaSemana() != null) {
+                        horario.setDiaSemana(horarioDetails.getDiaSemana());
+                    }
+                    if (horarioDetails.getHoraInicio() != null) {
+                        horario.setHoraInicio(horarioDetails.getHoraInicio());
+                    }
+                    if (horarioDetails.getHoraFin() != null) {
+                        horario.setHoraFin(horarioDetails.getHoraFin());
+                    }
+                    horario.setDisponible(horarioDetails.isDisponible());
+
+                    return horarioRepository.save(horario);
+                })
+                .orElseThrow(() -> new RuntimeException("Horario no encontrado"));
+        } catch (Exception e) {
+            logger.error("Error al actualizar horario: {}", e.getMessage());
+            throw new RuntimeException("Error al actualizar el horario: " + e.getMessage());
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public Horario obtenerHorarioPorId(Integer id) {
+        logger.info("Obteniendo horario con ID: {}", id);
+        try {
+            return horarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Horario no encontrado"));
+        } catch (Exception e) {
+            logger.error("Error al obtener horario por ID: {}", e.getMessage());
+            throw new RuntimeException("Error al obtener el horario: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void eliminarHorario(Integer id) {
+        logger.info("Eliminando horario con ID: {}", id);
+        try {
+            if (!horarioRepository.existsById(id)) {
+                throw new RuntimeException("Horario no encontrado");
+            }
+            horarioRepository.deleteById(id);
+            logger.info("Horario eliminado exitosamente");
+        } catch (Exception e) {
+            logger.error("Error al eliminar horario: {}", e.getMessage());
+            throw new RuntimeException("Error al eliminar el horario: " + e.getMessage());
+        }
+    }
 } 
