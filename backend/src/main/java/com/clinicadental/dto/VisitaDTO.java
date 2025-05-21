@@ -4,23 +4,16 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Future;
 import java.time.LocalDateTime;
+import com.clinicadental.models.Visita.EstadoVisita;
 
 public class VisitaDTO {
-    @NotNull(message = "El ID del odontólogo es requerido")
     private Integer odontologo_id;
-
-    @NotBlank(message = "El DNI del paciente es requerido")
     private String paciente_dni;
-
-    @NotNull(message = "La fecha y hora son requeridas")
-    @Future(message = "La fecha y hora deben ser futuras")
     private LocalDateTime fechaHora;
-
-    @NotBlank(message = "El motivo de la visita es requerido")
     private String motivo;
-
     private String observaciones;
     private Integer tratamiento_id;
+    private EstadoVisita estado;
 
     // Getters y Setters
     public Integer getOdontologo_id() {
@@ -69,5 +62,26 @@ public class VisitaDTO {
 
     public void setTratamiento_id(Integer tratamiento_id) {
         this.tratamiento_id = tratamiento_id;
+    }
+
+    public EstadoVisita getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoVisita estado) {
+        this.estado = estado;
+    }
+
+    @Override
+    public String toString() {
+        return "VisitaDTO{" +
+                "odontologo_id=" + odontologo_id +
+                ", paciente_dni='" + paciente_dni + '\'' +
+                ", fechaHora=" + fechaHora +
+                ", motivo='" + motivo + '\'' +
+                ", observaciones='" + observaciones + '\'' +
+                ", tratamiento_id=" + tratamiento_id +
+                ", estado=" + estado +
+                '}';
     }
 } 

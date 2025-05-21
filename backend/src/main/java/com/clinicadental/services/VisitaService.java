@@ -156,7 +156,13 @@ public class VisitaService {
         try {
             return visitaRepository.findById(id)
                 .map(visita -> {
-                    // Solo permitir actualizar ciertos campos
+                    // Actualizar todos los campos que pueden ser modificados
+                    if (visitaDetails.getFechaHora() != null) {
+                        visita.setFechaHora(visitaDetails.getFechaHora());
+                    }
+                    if (visitaDetails.getMotivo() != null) {
+                        visita.setMotivo(visitaDetails.getMotivo());
+                    }
                     if (visitaDetails.getObservaciones() != null) {
                         visita.setObservaciones(visitaDetails.getObservaciones());
                     }
@@ -224,6 +230,21 @@ public class VisitaService {
         } catch (Exception e) {
             logger.error("Error al obtener visita por ID: {}", e.getMessage());
             throw new RuntimeException("Error al obtener la visita: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void eliminarVisita(Integer id) {
+        logger.info("Eliminando visita con ID: {}", id);
+        try {
+            if (!visitaRepository.existsById(id)) {
+                throw new RuntimeException("Visita no encontrada");
+            }
+            visitaRepository.deleteById(id);
+            logger.info("Visita eliminada exitosamente");
+        } catch (Exception e) {
+            logger.error("Error al eliminar visita: {}", e.getMessage());
+            throw new RuntimeException("Error al eliminar la visita: " + e.getMessage());
         }
     }
 } 

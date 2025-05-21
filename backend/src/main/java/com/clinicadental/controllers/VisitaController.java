@@ -54,14 +54,28 @@ public class VisitaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateVisita(@PathVariable Integer id, @Valid @RequestBody VisitaDTO visitaDTO) {
+    public ResponseEntity<?> updateVisita(@PathVariable Integer id, @RequestBody VisitaDTO visitaDTO) {
         try {
             logger.info("Recibida solicitud para actualizar visita con ID: {}", id);
-            Visita visita = new Visita();
-            visita.setObservaciones(visitaDTO.getObservaciones());
+            logger.info("Datos recibidos: {}", visitaDTO);
             
+            Visita visita = new Visita();
+            
+            // Actualizar todos los campos que pueden ser modificados
+            if (visitaDTO.getFechaHora() != null) {
+                visita.setFechaHora(visitaDTO.getFechaHora());
+            }
+            if (visitaDTO.getMotivo() != null) {
+                visita.setMotivo(visitaDTO.getMotivo());
+            }
+            if (visitaDTO.getObservaciones() != null) {
+                visita.setObservaciones(visitaDTO.getObservaciones());
+            }
             if (visitaDTO.getTratamiento_id() != null) {
                 visita.setTratamiento(visitaService.obtenerVisitaPorId(id).getTratamiento());
+            }
+            if (visitaDTO.getEstado() != null) {
+                visita.setEstado(visitaDTO.getEstado());
             }
             
             Visita updatedVisita = visitaService.actualizarVisita(id, visita);
@@ -69,7 +83,7 @@ public class VisitaController {
         } catch (RuntimeException e) {
             logger.error("Error al actualizar visita: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
+                    .body("Error al actualizar la visita: " + e.getMessage());
         }
     }
 
@@ -139,6 +153,19 @@ public class VisitaController {
         } catch (RuntimeException e) {
             logger.error("Error al obtener visita: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteVisita(@PathVariable Integer id) {
+        try {
+            logger.info("Recibida solicitud para eliminar visita con ID: {}", id);
+            visitaService.eliminarVisita(id);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            logger.error("Error al eliminar visita: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(e.getMessage());
         }
     }
