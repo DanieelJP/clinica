@@ -2,18 +2,18 @@ package com.clinicadental.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-@Data
-@EqualsAndHashCode(of = "dni")
+import java.time.LocalDate;
+
 @Entity
-@Table(name = "Paciente")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Paciente {
     @Id
-    @Column(nullable = false, unique = true, length = 20)
+    @Column(nullable = false, length = 20)
     private String dni;
 
     @Column(nullable = false, length = 50)
@@ -28,7 +28,7 @@ public class Paciente {
     @Column(nullable = false, length = 20)
     private String telefono;
 
-    @Column(length = 50)
+    @Column(name = "obra_social", length = 50)
     private String obraSocial;
 
     @Column(length = 50)
@@ -36,13 +36,4 @@ public class Paciente {
 
     @Column(name = "tipo_pago", nullable = false, length = 20)
     private String tipoPago;
-
-    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Responsable> responsables = new HashSet<>();
-
-    @OneToMany(mappedBy = "paciente", fetch = FetchType.LAZY)
-    private Set<Visita> visitas = new HashSet<>();
-
-    public Paciente() {
-    }
 }

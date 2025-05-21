@@ -124,13 +124,6 @@ public class VisitaService {
                 throw new RuntimeException(mensaje);
             }
 
-            // Validar que el paciente es menor de edad y tiene un responsable asignado
-            if (paciente.getFechaNacimiento().plusYears(18).isAfter(LocalDateTime.now().toLocalDate())) {
-                if (paciente.getResponsables().isEmpty()) {
-                    throw new RuntimeException("El paciente es menor de edad y requiere un responsable asignado");
-                }
-            }
-
             // Si hay un tratamiento, validar que existe y asignarlo
             if (tratamientoId != null) {
                 Tratamiento tratamiento = tratamientoRepository.findById(tratamientoId)
