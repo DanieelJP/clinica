@@ -29,6 +29,9 @@ Crea archivos `.env` en las carpetas `frontend` y `backend` con las variables de
 - Gestión de usuarios y roles
 - Personalización de horarios en el rol de odontólogo
 
+## ⚠️ Base de datos ⚠️
+En este punto encontraremos un archivo .sql que contiene la estructura de la misma BBDD. Se deberia importar este archivo.
+
 ## Licencia
 
 [MIT License]
