@@ -1,6 +1,6 @@
 # Sistema de Gestión de Clínica Dental
 
-Un sistema completo para la gestión de una clínica dental, incluyendo citas, pacientes y visitas.
+Un sistema completo para la gestión de una clínica dental, incluyendo citas, pacientes, horarios y visitas.
 
 ## Estructura del Proyecto
 
@@ -26,9 +26,9 @@ Crea archivos `.env` en las carpetas `frontend` y `backend` con las variables de
 - Gestión de pacientes
 - Programación de citas
 - Registro de visitas
-- Historial clínico
 - Gestión de usuarios y roles
+- Personalización de horarios en el rol de odontólogo
 
 ## Licencia
 
-[MIT License](LICENSE)
+[MIT License]
